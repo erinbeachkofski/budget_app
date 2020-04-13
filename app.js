@@ -159,6 +159,32 @@ var UIController = (function() {
 
 	}
 
+	var nodeListForEach = function(list, callback) {
+			for (var i = 0; i < list.length; i++) {
+				callback(list[i], i);
+			}
+		}
+
+	var formatNumber = function(num, type) {
+
+			var numSplit, int, dec;
+
+			num = Math.abs(num);
+			num - num.toFixed(2);
+
+			numSplit = num.split('.');
+
+			int = numSplit[0];
+			if (int.length > 3) {
+				int.substr(0, int.length-3) + ',' + int.substr(int.length - 3, 3);
+			}
+
+			dec = numSplit[1];
+
+			return (type === 'exp' ? '-' : '+') + ' ' + int + dec;
+
+		}
+
 	return {
 		getInput: function(){
 			return {
@@ -228,12 +254,6 @@ var UIController = (function() {
 																					// Each HTML element is a NODE
 			var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);	// Returns a Node list!
 
-			var nodeListForEach = function(list, callback) {
-				for (var i = 0; i < list.length; i++) {
-					callback(list[i], i);
-				}
-			}
-
 			nodeListForEach(fields, function(current, index) {
 
 				if (percentages[index] > 0) {
@@ -260,23 +280,18 @@ var UIController = (function() {
 
 		},
 
-		formatNumber: function(num, type) {
+		changedType: function() {
 
-			var numSplit, int, dec;
+			var fields = document.querySelectorAll(
+					DOMstrings.inputType + ', ' +
+					DOMstrings.inputDescription + ', ' + 
+					DOMstrings.inputValue);
+				
+			nodeListForEach(fields, function(cur) {
+				cur.classList.toggle('red-focus');
+			});
 
-			num = Math.abs(num);
-			num - num.toFixed(2);
-
-			numSplit = num.split('.');
-
-			int = numSplit[0];
-			if (int.length > 3) {
-				int.substr(0, int.length-3) + ',' + int.substr(int.length - 3, 3);
-			}
-
-			dec = numSplit[1];
-
-			return (type === 'exp' ? '-' : '+') + ' ' + int + dec;
+			document.querySelector(DOMstrings.inputButton).classList.toggle('red');
 
 		},
 
@@ -304,6 +319,8 @@ var controller = (function(budgetCtrl, UICtrl) {
 		});
 
 		document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
+		document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
 
 	};
 
