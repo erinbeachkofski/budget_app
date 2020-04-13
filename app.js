@@ -155,6 +155,7 @@ var UIController = (function() {
 		percentageLabel: '.budget__expenses--percentage',
 		expensesPercLabel: '.item__percentage',
 		container: '.container',
+		dateLabel: '.budget__title--month',
 
 	}
 
@@ -213,8 +214,8 @@ var UIController = (function() {
 		displayBudget: function(obj) {
 
 			document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-			document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
-			document.querySelector(DOMstrings.expenseLabel).textContent = obj.totalExp;
+			document.querySelector(DOMstrings.incomeLabel).textContent = "+ " + obj.totalInc;
+			document.querySelector(DOMstrings.expenseLabel).textContent = "- " + obj.totalExp;
 			
 			if (obj.percentage > 0) {
 				document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage + "%";
@@ -242,6 +243,40 @@ var UIController = (function() {
 				}
 
 			});
+
+		},
+
+		displayMonth: function() {
+
+			var now, month, months, year;
+
+			now = new Date();
+
+			months = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			month = now.getMonth();
+			year = now.getFullYear();
+
+			document.querySelector(DOMstrings.dateLabel).textContent = months[month-1] + ' ' + year;
+
+		},
+
+		formatNumber: function(num, type) {
+
+			var numSplit, int, dec;
+
+			num = Math.abs(num);
+			num - num.toFixed(2);
+
+			numSplit = num.split('.');
+
+			int = numSplit[0];
+			if (int.length > 3) {
+				int.substr(0, int.length-3) + ',' + int.substr(int.length - 3, 3);
+			}
+
+			dec = numSplit[1];
+
+			return (type === 'exp' ? '-' : '+') + ' ' + int + dec;
 
 		},
 
@@ -343,6 +378,7 @@ var controller = (function(budgetCtrl, UICtrl) {
 
 	return {
 		init: function() {
+			UICtrl.displayMonth();
 			UICtrl.displayBudget({
 				budget: 0,
 				totalInc: 0,
